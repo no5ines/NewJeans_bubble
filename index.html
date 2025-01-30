@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Philia BBS - NewJeans Ether</title>
-       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <style>
         :root {
             --deep-space: #0a1a2a;
@@ -232,6 +232,33 @@
         padding: 10px 15px;
     }
 }
+
+/* 删除按钮样式 */
+.delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: rgba(255, 255, 255, 0.3); /* 半透明背景 */
+    border-radius: 50%; /* 圆形按钮 */
+    color: white;
+    font-size: 18px; /* 使用 X 字符 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* 悬停效果 */
+.delete-btn:hover {
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(1.1);
+}
+
+
     </style>
 </head>
 <body>
@@ -239,7 +266,7 @@
 
 <div class="grid-container">
     <aside class="nav-panel">
-        <img alt="NewJeans" src="images/newjeans_logo.png" style="width:100%; border-radius:8px;">
+        <img alt="NewJeans" src="newjeans_logo.png" style="width:100%; border-radius:8px;">
         <div class="haiku-title">BubbleGum<br>NewJeans</div>
         <ul style="list-style:none; padding:0; color:#fff;">
             <li class="member-item">✦ Hanni</li>
@@ -256,12 +283,12 @@
             <div class="ether-bubble">
                 <span class="timestamp">[23:61]</span>
                 <span style="color:#FFFFFF">✦ 匿名_814:</span>
-                在旋律的褶皱里，我们是否共享同一个月光？
+                So smooth, soft like a hug
             </div>
         </div>
 
         <div style="margin-top:20px; display:flex; gap:10px">
-            <input class="phantom-input" placeholder="在此溶解你的话语..."
+            <input class="phantom-input" placeholder="Oh my baby sweet like bubble gum"
                    style="flex:1" type="text">
             <button class="phantom-input" onclick="sendMessage()" style="width:100px; cursor: pointer">✦ 放流</button>
         </div>
@@ -286,36 +313,36 @@ const memberData = {
 "Hanni": {
     avatar: "hanni_avatar.png",
     color: "hsl(280, 70%, 65%)",
-    tag: "甜蜜主唱",
-    bio: "来自越南的治愈系嗓音\n最新动态：正在准备solo单曲",
+    tag: "🦭",
+    bio: "You just got my heart pump pumpin’",
     audio: "hanni_demo.mp3"
 },
 "Minji": {
     avatar: "minji_avatar.png",
     color: "hsl(180, 70%, 60%)",
-    tag: "全能队长",
-    bio: "舞台掌控者\n最新动态：编舞练习中",
+    tag: "熊",
+    bio: "You make my heart melt away ",
     audio: "minji_demo.mp3"
 },
 "Hyein": {
     avatar: "hyein_avatar.png",
     color: "hsl(40, 80%, 60%)",
     tag: "忙内精灵",
-    bio: "00后的舞台魅力\n最新动态：日语学习中",
+    bio: "We’re gonna ﬂy away",
     audio: "hyein_demo.mp3"
 },
 "Danielle": {
     avatar: "danielle_avatar.png",
     color: "hsl(150, 70%, 55%)",
-    tag: "双语担当",
-    bio: "澳韩混血的独特声线\n最新动态：参与作词创作",
+    tag: "🐶",
+    bio: "Let’s go far away",
     audio: "danielle_demo.mp3"
 },
 "Haerin": {
     avatar: "haerin_avatar.png",
     color: "hsl(320, 70%, 65%)",
-    tag: "主舞猫咪",
-    bio: "舞蹈机器\n最新动态：练习室直拍破百万",
+    tag: "🐈‍⬛",
+    bio: "You’re a softie",
     audio: "haerin_demo.mp3"
 }
 };
@@ -401,26 +428,51 @@ createEtherParticles();
     ];
 
 function sendMessage() {
-const input = document.querySelector('.phantom-input'); // 这里修正了选择器
-if (input.value.trim()) {
- saveMessage(input.value);
-    const chatStream = document.getElementById('chat-stream');
-    const timestamp = new Date().toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'});
-    const anonymousUser = `匿名_${Math.floor(Math.random() * 900 + 100)}`;
-    const bubble = document.createElement('div');
-    bubble.className = 'ether-bubble';
-    bubble.innerHTML = `
-        <span class="timestamp">[${new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})}]</span>
-        <span style="color:hsl(${Math.random()*360},70%,70%)">
-            ✦ 匿名_${Math.floor(Math.random()*900+100)}:
-        </span>
-        ${input.value}
-    `;
+    const input = document.querySelector('.phantom-input');
+    if (input.value.trim()) {
+        const chatStream = document.getElementById('chat-stream');
+        const timestamp = new Date().toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'});
+        const anonymousUser = `匿名_${Math.floor(Math.random() * 900 + 100)}`;
+        const messageText = input.value;
 
-    chatStream.appendChild(bubble);
-    input.value = ''; // 清空输入框
-    chatStream.scrollTop = chatStream.scrollHeight;
+        // 创建消息元素
+        const bubble = document.createElement('div');
+        bubble.className = 'ether-bubble';
+        bubble.innerHTML = `
+            <span class="timestamp">[${timestamp}]</span>
+            <span style="color:hsl(${Math.random() * 360},70%,70%)">
+                ✦ ${anonymousUser}:
+            </span>
+            <span class="message-text">${messageText}</span> <!-- 用 span 包裹消息内容 -->
+            <button class="delete-btn" onclick="deleteMessage(this)">X</button>
+        `;
+
+        chatStream.appendChild(bubble);
+
+        saveMessage({
+            timestamp: timestamp,
+            user: anonymousUser,
+            message: messageText
+        });
+
+        input.value = ''; // 清空输入框
+        chatStream.scrollTop = chatStream.scrollHeight;
+    }
 }
+
+function deleteMessage(button) {
+    const bubble = button.parentElement;
+    const timestamp = bubble.querySelector('.timestamp').textContent.replace(/\[|\]/g, '').trim(); // 获取时间
+    const user = bubble.querySelector('span:nth-child(2)').textContent.trim(); // 获取用户
+    const messageText = bubble.querySelector('.message-text').textContent.trim();  // 获取消息文本
+
+    // 重新存储 localStorage，确保删除的消息不会在刷新后重新出现
+    let history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+    history = history.filter(msg => !(msg.timestamp === timestamp && msg.user === user && msg.message === messageText));
+    localStorage.setItem('chatHistory', JSON.stringify(history));
+
+    // 从页面删除
+    bubble.remove();
 }
 
     // 自动诗意注入
@@ -433,23 +485,35 @@ if (input.value.trim()) {
 
     createEtherParticles();
 
-    // 示例：消息持久化（localStorage版）
 function saveMessage(message) {
-const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
-history.push(message);
-localStorage.setItem('chatHistory', JSON.stringify(history));
+    let history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+    history.push(message);
+    localStorage.setItem('chatHistory', JSON.stringify(history));
 }
+
+function loadMessages() {
+    const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+    history.forEach(msg => {
+        const bubble = document.createElement('div');
+        bubble.className = 'ether-bubble';
+        bubble.innerHTML = `
+            <span class="timestamp">[${msg.timestamp}]</span>
+            <span style="color:hsl(${Math.random() * 360},70%,70%)">
+                ✦ ${msg.user}:
+            </span>
+            <span class="message-text">${msg.message}</span>  <!-- 用 span 包裹消息内容 -->
+            <button class="delete-btn" onclick="deleteMessage(this)">X</button> <!-- 删除按钮 -->
+        `;
+        document.getElementById('chat-stream').appendChild(bubble);
+    });
+}
+
 
 // 页面加载时加载历史消息
 window.onload = () => {
-const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
-history.forEach(msg => {
-    const bubble = document.createElement('div');
-    bubble.className = 'ether-bubble';
-    bubble.innerHTML = msg;
-    document.getElementById('chat-stream').appendChild(bubble);
-});
+ loadMessages();
 };
+
 </script>
 </body>
 </html>
