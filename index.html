@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Philia BBS - NewJeans Ether</title>
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --deep-space: #0a1a2a;
+            --ether-glow: rgba(160,216,239,0.8);
+            --bubble-pink: #ffb6e680;
+            --frost-glass: rgba(16,32,48,0.85);
+        }
+
+        body {
+            background: radial-gradient(
+                circle at 20% 80%,
+                var(--deep-space) 30%,
+                #183952 70%,
+                #2c5d7d
+            );
+            font-family: 'MS Mincho', 'Georgia','MS PGothic', 'Helvetica Neue Light', sans-serif;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* 复合式容器结构 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 20px;
+            padding: 30px;
+            height: 100vh;
+        }
+
+        /* 左侧导航区 - 莉莉周风格 */
+        .nav-panel {
+            background: var(--frost-glass);
+            border: 2px solid var(--ether-glow);
+            border-radius: 8px;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 30px rgba(80,136,168,0.2);
+        }
+
+        /* 聊天室增强版 */
+        .chat-supercontainer {
+            background: linear-gradient(
+                160deg,
+                rgba(10,26,42,0.9) 0%,
+                rgba(28,93,125,0.7) 100%
+            );
+            border: 1px solid var(--ether-glow);
+            border-radius: 12px;
+            padding: 25px;
+            height: 90vh;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        /* 复合消息气泡 */
+        .ether-bubble {
+            background: linear-gradient(
+                145deg,
+                rgba(16,32,48,0.9) 30%,
+                rgba(80,136,168,0.4) 100%
+            );
+            padding: 12px 20px;
+            border-radius: 20px 20px 20px 3px;
+            margin: 15px 0;
+            max-width: 75%;
+            border: 1px solid var(--ether-glow);
+            position: relative;
+            animation: bubbleRise 1.2s cubic-bezier(0.2,0.8,0.2,1);
+        }
+
+        @keyframes bubbleRise {
+            0% { opacity: 0; transform: translateY(20px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* 动态背景系统 */
+        .ether-field {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .ether-particle {
+            position: absolute;
+            background: radial-gradient(
+                circle,
+                var(--bubble-pink) 20%,
+                var(--ether-glow) 80%
+            );
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            animation: etherFloat 25s infinite linear;
+        }
+
+        @keyframes etherFloat {
+            0% { transform: translateY(110vh) rotate(0deg); }
+            100% { transform: translateY(-10vh) rotate(720deg); }
+        }
+
+        /* 复合输入框 */
+        .phantom-input {
+            background: rgba(16,32,48,0.7) !important;
+            border: 1px solid var(--ether-glow) !important;
+            color: var(--ether-glow) !important;
+            padding: 12px 24px;
+            border-radius: 30px;
+            transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
+            backdrop-filter: blur(5px);
+        }
+
+        .phantom-input:focus {
+            box-shadow: 0 0 25px rgba(160,216,239,0.4);
+            background: rgba(28,93,125,0.5) !important;
+        }
+
+        /* 诗意标题 */
+        .haiku-title {
+            font-size: 2.2em;
+            color: var(--ether-glow);
+            text-shadow: 0 0 15px rgba(160,216,239,0.3);
+            writing-mode: vertical-rl;
+            margin: 20px 0;
+            letter-spacing: 5px;
+        }
+            /* 成员互动面板增强 */
+    .member-item {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 8px 12px;
+        border-radius: 6px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .member-item:hover {
+        background: rgba(160, 216, 239, 0.1);
+        transform: translateX(5px);
+    }
+
+    .member-item::before {
+        content: '';
+        position: absolute;
+        left: -10px;
+        top: 50%;
+        width: 3px;
+        height: 0;
+        background: var(--ether-glow);
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+
+    .member-item:hover::before {
+        height: 60%;
+        transform: translateY(-50%);
+    }
+
+    /* 成员卡片样式 */
+    .member-card {
+        position: fixed;
+        background: var(--frost-glass);
+        border: 2px solid var(--ether-glow);
+        border-radius: 12px;
+        padding: 20px;
+        width: 300px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 40px rgba(80, 136, 168, 0.3);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        z-index: 1000;
+    }
+
+    .member-card.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .member-card::after {
+        content: '';
+        position: absolute;
+        top: -15px;
+        left: 20px;
+        border-width: 8px;
+        border-style: solid;
+        border-color: transparent transparent var(--ether-glow) transparent;
+    }
+
+    .member-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 2px solid var(--ether-glow);
+        margin-bottom: 15px;
+    }
+
+    .member-tag {
+        background: linear-gradient(45deg, #ffb6e680 30%, #a0d8ef80);
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.9em;
+    }
+        /* 响应式布局调整 */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        padding: 15px;
+    }
+
+    .nav-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        border-radius: 12px 12px 0 0;
+        z-index: 100;
+    }
+
+    .haiku-title {
+        writing-mode: horizontal-tb;
+        margin: 10px 0;
+    }
+
+    .phantom-input {
+        padding: 10px 15px;
+    }
+}
+    </style>
+</head>
+<body>
+<div class="ether-field" id="particles"></div>
+
+<div class="grid-container">
+    <aside class="nav-panel">
+        <img alt="NewJeans" src="images/newjeans_logo.png" style="width:100%; border-radius:8px;">
+        <div class="haiku-title">BubbleGum<br>NewJeans</div>
+        <ul style="list-style:none; padding:0; color:#fff;">
+            <li class="member-item">✦ Hanni</li>
+            <li class="member-item">✦ Minji</li>
+            <li class="member-item">✦ Hyein</li>
+            <li class="member-item">✦ Danielle</li>
+            <li class="member-item">✦ Haerin</li>
+        </ul>
+    </aside>
+
+
+    <main class="chat-supercontainer">
+        <div id="chat-stream">
+            <div class="ether-bubble">
+                <span class="timestamp">[23:61]</span>
+                <span style="color:#FFFFFF">✦ 匿名_814:</span>
+                在旋律的褶皱里，我们是否共享同一个月光？
+            </div>
+        </div>
+
+        <div style="margin-top:20px; display:flex; gap:10px">
+            <input class="phantom-input" placeholder="在此溶解你的话语..."
+                   style="flex:1" type="text">
+            <button class="phantom-input" onclick="sendMessage()" style="width:100px; cursor: pointer">✦ 放流</button>
+        </div>
+    </main>
+</div>
+
+<template id="member-card-template">
+    <div class="member-card">
+        <img alt="avatar" class="member-avatar" src="">
+        <h3 style="color: var(--ether-glow); margin: 10px 0"></h3>
+        <div class="member-tag" style="margin-bottom: 15px"></div>
+        <p style="color: #ffffffcc; font-size: 0.95em; line-height: 1.6"></p>
+        <audio controls style="margin-top: 15px; width: 100%">
+            <source src="" type="audio/mpeg">
+        </audio>
+    </div>
+</template>
+
+<script>
+    // 成员数据库
+const memberData = {
+"Hanni": {
+    avatar: "hanni_avatar.png",
+    color: "hsl(280, 70%, 65%)",
+    tag: "甜蜜主唱",
+    bio: "来自越南的治愈系嗓音\n最新动态：正在准备solo单曲",
+    audio: "hanni_demo.mp3"
+},
+"Minji": {
+    avatar: "minji_avatar.png",
+    color: "hsl(180, 70%, 60%)",
+    tag: "全能队长",
+    bio: "舞台掌控者\n最新动态：编舞练习中",
+    audio: "minji_demo.mp3"
+},
+"Hyein": {
+    avatar: "hyein_avatar.png",
+    color: "hsl(40, 80%, 60%)",
+    tag: "忙内精灵",
+    bio: "00后的舞台魅力\n最新动态：日语学习中",
+    audio: "hyein_demo.mp3"
+},
+"Danielle": {
+    avatar: "danielle_avatar.png",
+    color: "hsl(150, 70%, 55%)",
+    tag: "双语担当",
+    bio: "澳韩混血的独特声线\n最新动态：参与作词创作",
+    audio: "danielle_demo.mp3"
+},
+"Haerin": {
+    avatar: "haerin_avatar.png",
+    color: "hsl(320, 70%, 65%)",
+    tag: "主舞猫咪",
+    bio: "舞蹈机器\n最新动态：练习室直拍破百万",
+    audio: "haerin_demo.mp3"
+}
+};
+
+// 初始化成员互动系统
+function initMemberInteraction() {
+const memberItems = document.querySelectorAll('.nav-panel li');
+let activeCard = null;
+
+memberItems.forEach(item => {
+    // 悬停光效
+    item.addEventListener('mousemove', (e) => {
+        const rect = item.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        item.style.setProperty('--x', `${x}px`);
+        item.style.setProperty('--y', `${y}px`);
+    });
+
+    // 点击显示卡片
+    item.addEventListener('click', (e) => {
+        if (activeCard) activeCard.remove();
+
+        const memberName = item.textContent.replace('✦ ', '').trim();
+        const data = memberData[memberName];
+        const card = document.getElementById('member-card-template').content.cloneNode(true);
+
+        card.querySelector('img').src = data.avatar;
+        card.querySelector('h3').textContent = memberName;
+        card.querySelector('.member-tag').textContent = data.tag;
+        card.querySelector('p').textContent = data.bio;
+        card.querySelector('audio source').src = data.audio;
+
+        const cardEl = card.querySelector('.member-card');
+        cardEl.style.top = `${e.clientY + 15}px`;
+        cardEl.style.left = `${e.clientX - 150}px`;
+        cardEl.style.borderColor = data.color;
+
+        document.body.appendChild(cardEl);
+        setTimeout(() => cardEl.classList.add('active'), 10);
+        activeCard = cardEl;
+    });
+});
+
+// 点击外部关闭卡片
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.member-card') && !e.target.closest('.nav-panel li')) {
+        if (activeCard) {
+            activeCard.classList.remove('active');
+            setTimeout(() => activeCard.remove(), 500);
+            activeCard = null;
+        }
+    }
+});
+}
+
+// 在页面加载时初始化
+window.addEventListener('DOMContentLoaded', () => {
+initMemberInteraction();
+// 保持原有粒子初始化
+createEtherParticles();
+});
+    // 动态粒子生成
+    function createEtherParticles() {
+        const container = document.getElementById('particles');
+        for(let i=0; i<50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'ether-particle';
+            particle.style.left = `${Math.random()*100}%`;
+            particle.style.width = particle.style.height =
+                `${Math.random()*10+5}px`;
+            particle.style.animationDelay = `${Math.random()*20}s`;
+            container.appendChild(particle);
+        }
+    }
+
+    // 诗意消息系统
+    const poeticDatabase = [
+        "電脳海に浮かぶ泡の記憶",
+        "新しい靴下の歌が流れる",
+        "光の指紋が画面に残る",
+        "未完成の愛をタイピングする"
+    ];
+
+function sendMessage() {
+const input = document.querySelector('.phantom-input'); // 这里修正了选择器
+if (input.value.trim()) {
+ saveMessage(input.value);
+    const chatStream = document.getElementById('chat-stream');
+    const timestamp = new Date().toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit'});
+    const anonymousUser = `匿名_${Math.floor(Math.random() * 900 + 100)}`;
+    const bubble = document.createElement('div');
+    bubble.className = 'ether-bubble';
+    bubble.innerHTML = `
+        <span class="timestamp">[${new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})}]</span>
+        <span style="color:hsl(${Math.random()*360},70%,70%)">
+            ✦ 匿名_${Math.floor(Math.random()*900+100)}:
+        </span>
+        ${input.value}
+    `;
+
+    chatStream.appendChild(bubble);
+    input.value = ''; // 清空输入框
+    chatStream.scrollTop = chatStream.scrollHeight;
+}
+}
+
+    // 自动诗意注入
+    setInterval(() => {
+        if(Math.random() > 0.75) {
+            document.querySelector('.phantom-input').value =
+                poeticDatabase[Math.floor(Math.random()*poeticDatabase.length)];
+        }
+    }, 15000);
+
+    createEtherParticles();
+
+    // 示例：消息持久化（localStorage版）
+function saveMessage(message) {
+const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+history.push(message);
+localStorage.setItem('chatHistory', JSON.stringify(history));
+}
+
+// 页面加载时加载历史消息
+window.onload = () => {
+const history = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+history.forEach(msg => {
+    const bubble = document.createElement('div');
+    bubble.className = 'ether-bubble';
+    bubble.innerHTML = msg;
+    document.getElementById('chat-stream').appendChild(bubble);
+});
+};
+</script>
+</body>
+</html>
